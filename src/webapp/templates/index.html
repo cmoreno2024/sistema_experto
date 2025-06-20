@@ -3,79 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <title>Sistema Experto - Asignación de Habitaciones</title>
+    <style>
+        body {
+            background: linear-gradient(120deg, #e0f7fa 0%, #b2ebf2 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #263238;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background: #ffffffcc;
+            max-width: 500px;
+            margin: 40px auto 0 auto;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            padding: 32px 40px 24px 40px;
+        }
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .logo img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px #0288d133;
+            background: #e1f5fe;
+            object-fit: cover;
+        }
+        h1 {
+            text-align: center;
+            color: #01579b;
+            margin-bottom: 12px;
+        }
+        .bienvenida {
+            text-align: center;
+            color: #0277bd;
+            font-size: 1.1em;
+            margin-bottom: 28px;
+        }
+        label {
+            font-weight: 500;
+            color: #0277bd;
+        }
+        select, input[type=number] {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0 18px 0;
+            border: 1px solid #b3e5fc;
+            border-radius: 6px;
+            background: #e1f5fe;
+            font-size: 1em;
+        }
+        input[type=submit] {
+            background: #0288d1;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            width: 100%;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        input[type=submit]:hover {
+            background: #01579b;
+        }
+        .asignada {
+            background: #e3f2fd;
+            border-left: 5px solid #0288d1;
+            margin-top: 24px;
+            padding: 18px 20px;
+            border-radius: 8px;
+        }
+        .asignada strong {
+            color: #01579b;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 16px 8px; }
+        }
+    </style>
+    <script>
+        function mostrarContiguas() {
+            var tipoViaje = document.getElementById('tipo_viaje').value;
+            var contiguasDiv = document.getElementById('contiguas_opcion');
+            if (tipoViaje === 'familiar') {
+                contiguasDiv.style.display = 'block';
+            } else {
+                contiguasDiv.style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1>Asignación de Habitaciones en Hoteles de Ushuaia</h1>
-    <form method="post">
-        <label for="tipo_cliente">Tipo de cliente:</label>
-        <select name="tipo_cliente" id="tipo_cliente">
-            <option value="VIP">VIP</option>
-            <option value="Regular">Regular</option>
-            <option value="familia">Familia</option>
-            <option value="pareja">Pareja</option>
-            <option value="persona_mayor">Persona mayor</option>
-        </select><br><br>
-        <label for="edad">Edad (si aplica):</label>
-        <input type="number" name="edad" id="edad"><br><br>
-        <label for="preferencia_cama">Preferencia de cama:</label>
-        <select name="preferencia_cama" id="preferencia_cama">
-            <option value="">--</option>
-            <option value="matrimonial">Matrimonial</option>
-            <option value="twin">Twin</option>
-        </select><br><br>
-        <label for="preferencia_vista">Preferencia de vista:</label>
-        <select name="preferencia_vista" id="preferencia_vista">
-            <option value="">--</option>
-            <option value="mar">Mar</option>
-            <option value="montaña">Montaña</option>
-            <option value="ciudad">Ciudad</option>
-        </select><br><br>
-        <label for="vista">Vista de la habitación:</label>
-        <select name="vista" id="vista">
-            <option value="mar">Mar</option>
-            <option value="montaña">Montaña</option>
-            <option value="ciudad">Ciudad</option>
-        </select><br><br>
-        <label for="disponible">¿Disponible?:</label>
-        <select name="disponible" id="disponible">
-            <option value="si">Sí</option>
-            <option value="no">No</option>
-        </select><br><br>
-        <label for="piso">Piso:</label>
-        <input type="number" name="piso" id="piso"><br><br>
-        <label for="tipo_cama">Tipo de cama en la habitación:</label>
-        <select name="tipo_cama" id="tipo_cama">
-            <option value="">--</option>
-            <option value="matrimonial">Matrimonial</option>
-            <option value="twin">Twin</option>
-        </select><br><br>
-        <label for="capacidad">Capacidad de la habitación:</label>
-        <input type="number" name="capacidad" id="capacidad"><br><br>
-        <label for="contigua">¿Habitación contigua?:</label>
-        <select name="contigua" id="contigua">
-            <option value="">--</option>
-            <option value="si">Sí</option>
-            <option value="no">No</option>
-        </select><br><br>
-        <label for="habitaciones_contiguas">¿Reserva requiere habitaciones contiguas?:</label>
-        <select name="habitaciones_contiguas" id="habitaciones_contiguas">
-            <option value="">--</option>
-            <option value="si">Sí</option>
-            <option value="no">No</option>
-        </select><br><br>
-        <label for="ocupacion">Ocupación (cantidad de personas):</label>
-        <input type="number" name="ocupacion" id="ocupacion"><br><br>
-        <input type="submit" value="Consultar asignación">
-    </form>
-    {% if habitacion_asignada %}
-        <h2>Habitación asignada:</h2>
-        <p><strong>Piso:</strong> {{ habitacion_asignada['piso'] }}<br>
-        <strong>Número:</strong> {{ habitacion_asignada['numero'] }}<br>
-        <strong>Vista:</strong> {{ habitacion_asignada['vista'] }}</p>
-    {% endif %}
-    {% if resultado %}
-        <h2>Detalle de reglas activadas:</h2>
-        <pre>{{ resultado }}</pre>
-    {% endif %}
+    <div class="container">
+        <div class="logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Hotel Ushuaia Logo" title="Hotel Ficticio Ushuaia">
+        </div>
+        <h1>Asignación de Habitaciones<br>Hoteles de Ushuaia</h1>
+        <div class="bienvenida">
+            ¡Bienvenido al sistema de asignación de habitaciones!<br>
+            Adaptamos las preferencias para cada cliente, brindando la mejor experiencia en Ushuaia.
+        </div>
+        <form method="post">
+            <label for="tipo_cliente">Tipo de cliente:</label>
+            <select name="tipo_cliente" id="tipo_cliente" required>
+                <option value="VIP">VIP</option>
+                <option value="estandar">Estandar</option>
+            </select>
+            <label for="tipo_viaje">Tipo de viaje:</label>
+            <select name="tipo_viaje" id="tipo_viaje" required onchange="mostrarContiguas()">
+                <option value="familiar">Familiar</option>
+                <option value="pareja">Pareja</option>
+                <option value="trabajo">Trabajo</option>
+            </select>
+            <div id="contiguas_opcion" style="display:none;">
+                <label for="habitaciones_contiguas">¿Desea habitaciones contiguas?</label>
+                <select name="habitaciones_contiguas" id="habitaciones_contiguas">
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+                </select>
+            </div>
+            <label for="cantidad_pasajeros">Cantidad de pasajeros (1 a 5):</label>
+            <input type="number" name="cantidad_pasajeros" id="cantidad_pasajeros" min="1" max="5" required>
+            <label for="preferencia_cama">Preferencia de cama:</label>
+            <select name="preferencia_cama" id="preferencia_cama" required>
+                <option value="matrimonial">Matrimonial</option>
+                <option value="twin">Twin</option>
+            </select>
+            <label for="preferencia_vista">Preferencia de vista:</label>
+            <select name="preferencia_vista" id="preferencia_vista" required>
+                <option value="canal">Vista Canal Beagle</option>
+                <option value="montaña">Vista Montaña</option>
+            </select>
+            <input type="submit" value="Consultar asignación">
+        </form>
+        {% if habitacion_asignada %}
+            <div class="asignada">
+                <h2>Habitación asignada:</h2>
+                <p><strong>Piso:</strong> {{ habitacion_asignada['piso'] }} ({{ 'VIP' if habitacion_asignada['piso'] >= 6 else 'Estandar' }})<br>
+                <strong>Número:</strong> {{ habitacion_asignada['numero'] }}<br>
+                <strong>Vista:</strong> {% if habitacion_asignada['numero'] in [4,5] %}Canal Beagle{% else %}Montaña{% endif %}<br>
+                <strong>Tipo de habitación:</strong> {% if habitacion_asignada['numero'] in [3,4] %}Silenciosa{% else %}Normal{% endif %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>

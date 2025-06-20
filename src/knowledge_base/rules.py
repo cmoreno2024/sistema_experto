@@ -44,21 +44,30 @@ class AsignacionHabitacion(KnowledgeEngine):
     def asignar_vip_canal_alta(self, habitacion):
         self.asignada = habitacion
         print(f"Asignar habitación premium con vista al canal en piso alto: Piso {habitacion['piso']} Habitación {habitacion['numero']}")
-        self.habitaciones.remove(habitacion)
+        self.habitaciones = [
+            h for h in self.habitaciones
+            if not (h['piso'] == habitacion['piso'] and h['numero'] == habitacion['numero'])
+        ]
 
     @Rule(Cliente(preferencia_vista='canal'),
           AS.habitacion << Habitacion(vista='canal', disponible=True))
     def asignar_preferencia_canal(self, habitacion):
         self.asignada = habitacion
         print(f"Asignar habitación con vista al canal: Piso {habitacion['piso']} Habitación {habitacion['numero']}")
-        self.habitaciones.remove(habitacion)
+        self.habitaciones = [
+            h for h in self.habitaciones
+            if not (h['piso'] == habitacion['piso'] and h['numero'] == habitacion['numero'])
+        ]
 
     @Rule(Cliente(),
           AS.habitacion << Habitacion(disponible=True))
     def asignar_cualquier_disponible(self, habitacion):
         self.asignada = habitacion
         print(f"Asignar cualquier habitación disponible: Piso {habitacion['piso']} Habitación {habitacion['numero']}")
-        self.habitaciones.remove(habitacion)
+        self.habitaciones = [
+            h for h in self.habitaciones
+            if not (h['piso'] == habitacion['piso'] and h['numero'] == habitacion['numero'])
+        ]
 
     @Rule(Cliente(tipo='VIP'), Habitacion(vista='mar', disponible=True))
     def asignar_vip_mar(self):

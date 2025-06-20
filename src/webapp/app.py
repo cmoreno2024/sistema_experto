@@ -9,44 +9,45 @@ def index():
     habitacion_asignada = None
     if request.method == 'POST':
         tipo_cliente = request.form.get('tipo_cliente')
-        edad = request.form.get('edad')
+        tipo_viaje = request.form.get('tipo_viaje')
+        cantidad_pasajeros = int(request.form.get('cantidad_pasajeros'))
         preferencia_cama = request.form.get('preferencia_cama')
         preferencia_vista = request.form.get('preferencia_vista')
-        vista = request.form.get('vista')
-        disponible = request.form.get('disponible') == 'si'
-        piso = request.form.get('piso')
-        tipo_cama = request.form.get('tipo_cama')
-        capacidad = request.form.get('capacidad')
-        contigua = request.form.get('contigua') == 'si'
         habitaciones_contiguas = request.form.get('habitaciones_contiguas') == 'si'
-        ocupacion = request.form.get('ocupacion')
 
         habitaciones = generar_habitaciones()
+        # Marcar pisos según tipo de cliente
+        if tipo_cliente == 'VIP':
+            pisos_validos = list(range(6, 11))
+        else:
+            pisos_validos = list(range(1, 6))
+        habitaciones = [h for h in habitaciones if h['piso'] in pisos_validos]
+
+        # Marcar vista según preferencia
+        if preferencia_vista == 'canal':
+            habitaciones = [h for h in habitaciones if h['numero'] in [4, 5]]
+        elif preferencia_vista == 'montaña':
+            habitaciones = [h for h in habitaciones if h['numero'] in [1, 2, 3]]
+
+        # Habitaciones menos ruidosas para trabajo o pareja: 3 y 4
+        if tipo_viaje in ['trabajo', 'pareja']:
+            if preferencia_vista == 'canal':
+                habitaciones = [h for h in habitaciones if h['numero'] == 4]
+            elif preferencia_vista == 'montaña':
+                habitaciones = [h for h in habitaciones if h['numero'] == 3]
+
+        # Filtrar por capacidad
+        habitaciones = [h for h in habitaciones if h['capacidad'] >= cantidad_pasajeros]
+
         engine = AsignacionHabitacion(habitaciones)
         engine.reset()
-        # Declarar hechos según los campos
-        cliente_kwargs = {'tipo': tipo_cliente}
-        if edad:
-            cliente_kwargs['edad'] = int(edad)
-        if preferencia_cama:
-            cliente_kwargs['preferencia_cama'] = preferencia_cama
-        if preferencia_vista:
-            cliente_kwargs['preferencia_vista'] = preferencia_vista
-        engine.declare(Cliente(**cliente_kwargs))
-
-        # Declarar todas las habitaciones como hechos
+        engine.declare(Cliente(tipo=tipo_cliente, tipo_viaje=tipo_viaje, preferencia_cama=preferencia_cama, preferencia_vista=preferencia_vista))
+        reserva_kwargs = {'ocupacion': cantidad_pasajeros}
+        if tipo_viaje == 'familiar':
+            reserva_kwargs['habitaciones_contiguas'] = habitaciones_contiguas
+        engine.declare(Reserva(**reserva_kwargs))
         for h in habitaciones:
             engine.declare(Habitacion(**h))
-
-        reserva_kwargs = {}
-        if habitaciones_contiguas:
-            reserva_kwargs['habitaciones_contiguas'] = habitaciones_contiguas
-        if ocupacion:
-            reserva_kwargs['ocupacion'] = int(ocupacion)
-        if reserva_kwargs:
-            engine.declare(Reserva(**reserva_kwargs))
-
-        # Captura la salida de la inferencia
         import io, sys
         buffer = io.StringIO()
         sys.stdout = buffer
