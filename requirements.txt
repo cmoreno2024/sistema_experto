@@ -1,0 +1,5 @@
+# requirements.txt
+
+# Dependencias principales para el sistema experto
+experta
+flask

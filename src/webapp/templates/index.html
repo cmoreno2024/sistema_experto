@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema Experto - Asignación de Habitaciones</title>
+</head>
+<body>
+    <h1>Asignación de Habitaciones en Hoteles de Ushuaia</h1>
+    <form method="post">
+        <label for="tipo_cliente">Tipo de cliente:</label>
+        <select name="tipo_cliente" id="tipo_cliente">
+            <option value="VIP">VIP</option>
+            <option value="Regular">Regular</option>
+            <option value="familia">Familia</option>
+            <option value="pareja">Pareja</option>
+            <option value="persona_mayor">Persona mayor</option>
+        </select><br><br>
+        <label for="edad">Edad (si aplica):</label>
+        <input type="number" name="edad" id="edad"><br><br>
+        <label for="preferencia_cama">Preferencia de cama:</label>
+        <select name="preferencia_cama" id="preferencia_cama">
+            <option value="">--</option>
+            <option value="matrimonial">Matrimonial</option>
+            <option value="twin">Twin</option>
+        </select><br><br>
+        <label for="preferencia_vista">Preferencia de vista:</label>
+        <select name="preferencia_vista" id="preferencia_vista">
+            <option value="">--</option>
+            <option value="mar">Mar</option>
+            <option value="montaña">Montaña</option>
+            <option value="ciudad">Ciudad</option>
+        </select><br><br>
+        <label for="vista">Vista de la habitación:</label>
+        <select name="vista" id="vista">
+            <option value="mar">Mar</option>
+            <option value="montaña">Montaña</option>
+            <option value="ciudad">Ciudad</option>
+        </select><br><br>
+        <label for="disponible">¿Disponible?:</label>
+        <select name="disponible" id="disponible">
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+        </select><br><br>
+        <label for="piso">Piso:</label>
+        <input type="number" name="piso" id="piso"><br><br>
+        <label for="tipo_cama">Tipo de cama en la habitación:</label>
+        <select name="tipo_cama" id="tipo_cama">
+            <option value="">--</option>
+            <option value="matrimonial">Matrimonial</option>
+            <option value="twin">Twin</option>
+        </select><br><br>
+        <label for="capacidad">Capacidad de la habitación:</label>
+        <input type="number" name="capacidad" id="capacidad"><br><br>
+        <label for="contigua">¿Habitación contigua?:</label>
+        <select name="contigua" id="contigua">
+            <option value="">--</option>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+        </select><br><br>
+        <label for="habitaciones_contiguas">¿Reserva requiere habitaciones contiguas?:</label>
+        <select name="habitaciones_contiguas" id="habitaciones_contiguas">
+            <option value="">--</option>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+        </select><br><br>
+        <label for="ocupacion">Ocupación (cantidad de personas):</label>
+        <input type="number" name="ocupacion" id="ocupacion"><br><br>
+        <input type="submit" value="Consultar asignación">
+    </form>
+    {% if habitacion_asignada %}
+        <h2>Habitación asignada:</h2>
+        <p><strong>Piso:</strong> {{ habitacion_asignada['piso'] }}<br>
+        <strong>Número:</strong> {{ habitacion_asignada['numero'] }}<br>
+        <strong>Vista:</strong> {{ habitacion_asignada['vista'] }}</p>
+    {% endif %}
+    {% if resultado %}
+        <h2>Detalle de reglas activadas:</h2>
+        <pre>{{ resultado }}</pre>
+    {% endif %}
+</body>
+</html>
