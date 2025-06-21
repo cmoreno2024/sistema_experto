@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Sistema Experto - Asignación de Habitaciones</title>
-    <style>
+    <title>Sistema Experto - Asignación de Habitaciones</title>    <style>
         body {
             background: linear-gradient(120deg, #e0f7fa 0%, #b2ebf2 100%);
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -13,11 +12,45 @@
         }
         .container {
             background: #ffffffcc;
-            max-width: 500px;
+            max-width: 900px;
             margin: 40px auto 0 auto;
             border-radius: 16px;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
             padding: 32px 40px 24px 40px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #0288d1;
+            margin-bottom: 24px;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: #b3e5fc;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            color: #01579b;
+            border-radius: 8px 8px 0 0;
+            margin-right: 4px;
+            transition: background 0.3s;
+        }
+        .tab.active {
+            background: #0288d1;
+            color: white;
+        }
+        .tab:hover {
+            background: #29b6f6;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
         }
         .logo {
             display: flex;
@@ -77,15 +110,69 @@
             margin-top: 24px;
             padding: 18px 20px;
             border-radius: 8px;
-        }
-        .asignada strong {
+        }        .asignada strong {
             color: #01579b;
+        }
+        .pisos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .piso {
+            background: #f1f8e9;
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid #4caf50;
+        }
+        .piso.vip {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+        .piso h3 {
+            margin: 0 0 12px 0;
+            color: #2e7d32;
+        }
+        .piso.vip h3 {
+            color: #e65100;
+        }
+        .habitacion {
+            background: white;
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .habitacion-numero {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #1976d2;
+        }
+        .habitacion-detalles {
+            font-size: 0.9em;
+            margin-top: 4px;
+            color: #616161;
+        }
+        .vista-canal {
+            color: #0277bd;
+            font-weight: bold;
+        }
+        .vista-montana {
+            color: #388e3c;
+            font-weight: bold;
+        }
+        .silenciosa {
+            background: #e8f5e8;
+            border-left: 3px solid #4caf50;
         }
         @media (max-width: 600px) {
             .container { padding: 16px 8px; }
+            .tabs { flex-direction: column; }
+            .tab { margin-right: 0; margin-bottom: 2px; }
+            .pisos-container { grid-template-columns: 1fr; }
         }
-    </style>
-    <script>
+    </style>    <script>
         function mostrarContiguas() {
             var tipoViaje = document.getElementById('tipo_viaje').value;
             var contiguasDiv = document.getElementById('contiguas_opcion');
@@ -95,61 +182,117 @@
                 contiguasDiv.style.display = 'none';
             }
         }
+        
+        function mostrarTab(tabName) {
+            // Ocultar todos los contenidos de pestañas
+            var contents = document.querySelectorAll('.tab-content');
+            contents.forEach(function(content) {
+                content.classList.remove('active');
+            });
+            
+            // Quitar clase active de todas las pestañas
+            var tabs = document.querySelectorAll('.tab');
+            tabs.forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar el contenido seleccionado
+            document.getElementById(tabName).classList.add('active');
+            
+            // Activar la pestaña seleccionada
+            event.target.classList.add('active');
+        }
     </script>
 </head>
 <body>
     <div class="container">
         <div class="logo">
             <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Hotel Ushuaia Logo" title="Hotel Ficticio Ushuaia">
-        </div>
-        <h1>Asignación de Habitaciones<br>Hoteles de Ushuaia</h1>
+        </div>        <h1>Asignación de Habitaciones<br>Hoteles de Ushuaia</h1>
         <div class="bienvenida">
             ¡Bienvenido al sistema de asignación de habitaciones!<br>
             Adaptamos las preferencias para cada cliente, brindando la mejor experiencia en Ushuaia.
         </div>
-        <form method="post">
-            <label for="tipo_cliente">Tipo de cliente:</label>
-            <select name="tipo_cliente" id="tipo_cliente" required>
-                <option value="VIP">VIP</option>
-                <option value="estandar">Estandar</option>
-            </select>
-            <label for="tipo_viaje">Tipo de viaje:</label>
-            <select name="tipo_viaje" id="tipo_viaje" required onchange="mostrarContiguas()">
-                <option value="familiar">Familiar</option>
-                <option value="pareja">Pareja</option>
-                <option value="trabajo">Trabajo</option>
-            </select>
-            <div id="contiguas_opcion" style="display:none;">
-                <label for="habitaciones_contiguas">¿Desea habitaciones contiguas?</label>
-                <select name="habitaciones_contiguas" id="habitaciones_contiguas">
-                    <option value="no">No</option>
-                    <option value="si">Sí</option>
-                </select>
+        
+        <!-- Pestañas -->
+        <div class="tabs">
+            <button class="tab active" onclick="mostrarTab('asignacion')">Asignación de Habitaciones</button>
+            <button class="tab" onclick="mostrarTab('listado')">Listado de Habitaciones</button>
+        </div>
+        
+        <!-- Contenido de Asignación -->
+        <div id="asignacion" class="tab-content active">
+            <div class="form-container">
+                <form method="post">
+                    <label for="tipo_cliente">Tipo de cliente:</label>
+                    <select name="tipo_cliente" id="tipo_cliente" required>
+                        <option value="VIP">VIP</option>
+                        <option value="estandar">Estandar</option>
+                    </select>
+                    <label for="tipo_viaje">Tipo de viaje:</label>
+                    <select name="tipo_viaje" id="tipo_viaje" required onchange="mostrarContiguas()">
+                        <option value="familiar">Familiar</option>
+                        <option value="pareja">Pareja</option>
+                        <option value="trabajo">Trabajo</option>
+                    </select>
+                    <div id="contiguas_opcion" style="display:none;">
+                        <label for="habitaciones_contiguas">¿Desea habitaciones contiguas?</label>
+                        <select name="habitaciones_contiguas" id="habitaciones_contiguas">
+                            <option value="no">No</option>
+                            <option value="si">Sí</option>
+                        </select>
+                    </div>
+                    <label for="cantidad_pasajeros">Cantidad de pasajeros (1 a 5):</label>
+                    <input type="number" name="cantidad_pasajeros" id="cantidad_pasajeros" min="1" max="5" required>
+                    <label for="preferencia_cama">Preferencia de cama:</label>
+                    <select name="preferencia_cama" id="preferencia_cama" required>
+                        <option value="matrimonial">Matrimonial</option>
+                        <option value="twin">Twin</option>
+                    </select>
+                    <label for="preferencia_vista">Preferencia de vista:</label>
+                    <select name="preferencia_vista" id="preferencia_vista" required>
+                        <option value="canal">Vista Canal Beagle</option>
+                        <option value="montaña">Vista Montaña</option>
+                    </select>
+                    <input type="submit" value="Consultar asignación">
+                </form>
+                {% if habitacion_asignada %}
+                    <div class="asignada">
+                        <h2>Habitación asignada:</h2>
+                        <p><strong>Piso:</strong> {{ habitacion_asignada['piso'] }} ({{ 'VIP' if habitacion_asignada['piso'] >= 6 else 'Estandar' }})<br>
+                        <strong>Número:</strong> {{ habitacion_asignada['numero'] }}<br>
+                        <strong>Vista:</strong> {% if habitacion_asignada['numero'] in [4,5] %}Canal Beagle{% else %}Montaña{% endif %}<br>
+                        <strong>Tipo de habitación:</strong> {% if habitacion_asignada['numero'] in [3,4] %}Silenciosa{% else %}Normal{% endif %}
+                        </p>
+                    </div>
+                {% endif %}
             </div>
-            <label for="cantidad_pasajeros">Cantidad de pasajeros (1 a 5):</label>
-            <input type="number" name="cantidad_pasajeros" id="cantidad_pasajeros" min="1" max="5" required>
-            <label for="preferencia_cama">Preferencia de cama:</label>
-            <select name="preferencia_cama" id="preferencia_cama" required>
-                <option value="matrimonial">Matrimonial</option>
-                <option value="twin">Twin</option>
-            </select>
-            <label for="preferencia_vista">Preferencia de vista:</label>
-            <select name="preferencia_vista" id="preferencia_vista" required>
-                <option value="canal">Vista Canal Beagle</option>
-                <option value="montaña">Vista Montaña</option>
-            </select>
-            <input type="submit" value="Consultar asignación">
-        </form>
-        {% if habitacion_asignada %}
-            <div class="asignada">
-                <h2>Habitación asignada:</h2>
-                <p><strong>Piso:</strong> {{ habitacion_asignada['piso'] }} ({{ 'VIP' if habitacion_asignada['piso'] >= 6 else 'Estandar' }})<br>
-                <strong>Número:</strong> {{ habitacion_asignada['numero'] }}<br>
-                <strong>Vista:</strong> {% if habitacion_asignada['numero'] in [4,5] %}Canal Beagle{% else %}Montaña{% endif %}<br>
-                <strong>Tipo de habitación:</strong> {% if habitacion_asignada['numero'] in [3,4] %}Silenciosa{% else %}Normal{% endif %}
-                </p>
+        </div>
+        
+        <!-- Contenido de Listado -->
+        <div id="listado" class="tab-content">
+            <h2>Listado Completo de Habitaciones por Piso</h2>
+            <div class="pisos-container">
+                {% for piso in range(10, 0, -1) %}
+                    <div class="piso {{ 'vip' if piso >= 6 else '' }}">
+                        <h3>Piso {{ piso }} - {{ 'VIP' if piso >= 6 else 'Estándar' }}</h3>
+                        {% for numero in range(1, 6) %}
+                            <div class="habitacion {{ 'silenciosa' if numero in [3, 4] else '' }}">
+                                <div class="habitacion-numero">Habitación {{ numero }}</div>
+                                <div class="habitacion-detalles">
+                                    <span class="{{ 'vista-canal' if numero in [4, 5] else 'vista-montana' }}">
+                                        📍 Vista: {{ 'Canal Beagle' if numero in [4, 5] else 'Montaña' }}
+                                    </span><br>
+                                    🔇 Tipo: {{ 'Silenciosa' if numero in [3, 4] else 'Normal' }}<br>
+                                    👥 Capacidad: 5 pasajeros<br>
+                                    🏨 Categoría: {{ 'VIP' if piso >= 6 else 'Estándar' }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
             </div>
-        {% endif %}
+        </div>
     </div>
 </body>
 </html>

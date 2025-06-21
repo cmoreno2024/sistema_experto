@@ -3,3 +3,11 @@
 # Dependencias principales para el sistema experto
 experta
 flask
+
+# Dependencias para machine learning (cumplir requisitos académicos)
+scikit-learn
+pandas
+numpy
+matplotlib
+seaborn
+jupyter
