@@ -24,12 +24,17 @@ def generar_habitaciones():
                 vista = 'sin_vista'
             else:
                 vista = 'canal'
+            
+            # Las habitaciones del primer piso son adaptadas para accesibilidad
+            accesible = True if piso == 1 else False
+            
             habitaciones.append({
                 'piso': piso,
                 'numero': numero,
                 'vista': vista,
                 'capacidad': 5,
-                'disponible': True
+                'disponible': True,
+                'accesible': accesible  # Nueva característica
             })
     return habitaciones
 
@@ -39,6 +44,41 @@ class AsignacionHabitacion(KnowledgeEngine):
         self.habitaciones = habitaciones
         self.asignada = None
 
+    # REGLAS DE PRIORIDAD ALTA - ACCESIBILIDAD
+    @Rule(Cliente(necesita_accesibilidad=True),
+          AS.habitacion << Habitacion(accesible=True, disponible=True, piso=1))
+    def asignar_accesibilidad_prioritaria(self, habitacion):
+        """PRIORIDAD ALTA: Asignar habitación accesible en primer piso"""
+        self.asignada = habitacion
+        print(f"🦽 ACCESIBILIDAD PRIORITARIA: Asignando habitación adaptada en planta baja - Piso {habitacion['piso']} Habitación {habitacion['numero']}")
+        self.habitaciones = [
+            h for h in self.habitaciones
+            if not (h['piso'] == habitacion['piso'] and h['numero'] == habitacion['numero'])
+        ]
+
+    @Rule(Cliente(edad=P(lambda x: x >= 70)),
+          AS.habitacion << Habitacion(accesible=True, disponible=True, piso=1))
+    def asignar_adulto_mayor_accesible(self, habitacion):
+        """PRIORIDAD ALTA: Asignar habitación accesible a adultos mayores de 70"""
+        self.asignada = habitacion
+        print(f"👵 ADULTO MAYOR: Asignando habitación accesible en planta baja - Piso {habitacion['piso']} Habitación {habitacion['numero']}")
+        self.habitaciones = [
+            h for h in self.habitaciones
+            if not (h['piso'] == habitacion['piso'] and h['numero'] == habitacion['numero'])
+        ]
+
+    @Rule(Cliente(movilidad_reducida=True),
+          AS.habitacion << Habitacion(accesible=True, disponible=True, piso=1))
+    def asignar_movilidad_reducida(self, habitacion):
+        """PRIORIDAD ALTA: Asignar habitación accesible para movilidad reducida"""
+        self.asignada = habitacion
+        print(f"♿ MOVILIDAD REDUCIDA: Asignando habitación adaptada - Piso {habitacion['piso']} Habitación {habitacion['numero']}")
+        self.habitaciones = [
+            h for h in self.habitaciones
+            if not (h['piso'] == habitacion['piso'] and h['numero'] == habitacion['numero'])
+        ]
+
+    # REGLAS EXISTENTES CON MENOR PRIORIDAD
     @Rule(Cliente(tipo='VIP'),
           AS.habitacion << Habitacion(vista='canal', disponible=True, piso=P(lambda x: x >= 7)))
     def asignar_vip_canal_alta(self, habitacion):

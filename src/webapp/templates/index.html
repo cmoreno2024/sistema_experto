@@ -248,21 +248,55 @@
                     <select name="preferencia_cama" id="preferencia_cama" required>
                         <option value="matrimonial">Matrimonial</option>
                         <option value="twin">Twin</option>
-                    </select>
-                    <label for="preferencia_vista">Preferencia de vista:</label>
+                    </select>                    <label for="preferencia_vista">Preferencia de vista:</label>
                     <select name="preferencia_vista" id="preferencia_vista" required>
                         <option value="canal">Vista Canal Beagle</option>
                         <option value="montaña">Vista Montaña</option>
                     </select>
+
+                    <!-- SECCIÓN DE ACCESIBILIDAD - PRIORIDAD ALTA -->
+                    <div class="accesibilidad-section">
+                        <h3 style="color: #d32f2f; margin-top: 24px; margin-bottom: 16px;">
+                            🦽 Accesibilidad (Prioridad Alta)
+                        </h3>
+                        
+                        <label for="edad">Edad del huésped principal:</label>
+                        <input type="number" name="edad" id="edad" min="1" max="120" value="25" required>
+                        
+                        <label for="necesita_accesibilidad">¿Necesita habitación accesible?</label>
+                        <select name="necesita_accesibilidad" id="necesita_accesibilidad">
+                            <option value="no">No</option>
+                            <option value="si">Sí (silla de ruedas, muletas, etc.)</option>
+                        </select>
+                        
+                        <label for="movilidad_reducida">¿Tiene movilidad reducida?</label>
+                        <select name="movilidad_reducida" id="movilidad_reducida">
+                            <option value="no">No</option>
+                            <option value="si">Sí (dificultades para subir escaleras)</option>
+                        </select>
+                        
+                        <div class="accesibilidad-info" style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 12px; margin: 16px 0; font-size: 0.9em;">
+                            <strong>ℹ️ Información:</strong><br>
+                            • Habitaciones accesibles disponibles en planta baja<br>
+                            • Acceso sin escaleras ni ascensor<br>
+                            • Puertas amplias y baño adaptado<br>
+                            • Automáticamente asignadas a personas de 70+ años
+                        </div>
+                    </div>
+
                     <input type="submit" value="Consultar asignación">
-                </form>
-                {% if habitacion_asignada %}
+                </form>                {% if habitacion_asignada %}
                     <div class="asignada">
                         <h2>Habitación asignada:</h2>
-                        <p><strong>Piso:</strong> {{ habitacion_asignada['piso'] }} ({{ 'VIP' if habitacion_asignada['piso'] >= 6 else 'Estandar' }})<br>
+                        <p>
+                        <strong>Piso:</strong> {{ habitacion_asignada['piso'] }} ({{ 'VIP' if habitacion_asignada['piso'] >= 6 else 'Estandar' }})<br>
                         <strong>Número:</strong> {{ habitacion_asignada['numero'] }}<br>
                         <strong>Vista:</strong> {% if habitacion_asignada['numero'] in [4,5] %}Canal Beagle{% else %}Montaña{% endif %}<br>
-                        <strong>Tipo de habitación:</strong> {% if habitacion_asignada['numero'] in [3,4] %}Silenciosa{% else %}Normal{% endif %}
+                        <strong>Tipo de habitación:</strong> {% if habitacion_asignada['numero'] in [3,4] %}Silenciosa{% else %}Normal{% endif %}<br>
+                        {% if habitacion_asignada.get('accesible') %}
+                        <strong style="color: #2e7d32;">🦽 Accesibilidad:</strong> <span style="color: #2e7d32; font-weight: bold;">Habitación adaptada ✓</span><br>
+                        <em style="color: #2e7d32;">• Acceso sin escalones • Puertas amplias • Baño adaptado</em>
+                        {% endif %}
                         </p>
                     </div>
                 {% endif %}
@@ -272,20 +306,32 @@
         <!-- Contenido de Listado -->
         <div id="listado" class="tab-content">
             <h2>Listado Completo de Habitaciones por Piso</h2>
-            <div class="pisos-container">
-                {% for piso in range(10, 0, -1) %}
+            <div class="pisos-container">                {% for piso in range(10, 0, -1) %}
                     <div class="piso {{ 'vip' if piso >= 6 else '' }}">
-                        <h3>Piso {{ piso }} - {{ 'VIP' if piso >= 6 else 'Estándar' }}</h3>
+                        <h3>Piso {{ piso }} - {{ 'VIP' if piso >= 6 else 'Estándar' }}
+                        {% if piso == 1 %}
+                            <span style="color: #2e7d32; font-weight: bold;">🦽 ACCESIBLE</span>
+                        {% endif %}
+                        </h3>
                         {% for numero in range(1, 6) %}
                             <div class="habitacion {{ 'silenciosa' if numero in [3, 4] else '' }}">
-                                <div class="habitacion-numero">Habitación {{ numero }}</div>
+                                <div class="habitacion-numero">Habitación {{ numero }}
+                                {% if piso == 1 %}
+                                    <span style="color: #2e7d32; font-size: 0.8em;">♿ ADAPTADA</span>
+                                {% endif %}
+                                </div>
                                 <div class="habitacion-detalles">
                                     <span class="{{ 'vista-canal' if numero in [4, 5] else 'vista-montana' }}">
                                         📍 Vista: {{ 'Canal Beagle' if numero in [4, 5] else 'Montaña' }}
                                     </span><br>
                                     🔇 Tipo: {{ 'Silenciosa' if numero in [3, 4] else 'Normal' }}<br>
                                     👥 Capacidad: 5 pasajeros<br>
-                                    🏨 Categoría: {{ 'VIP' if piso >= 6 else 'Estándar' }}
+                                    🏨 Categoría: {{ 'VIP' if piso >= 6 else 'Estándar' }}<br>
+                                    {% if piso == 1 %}
+                                    <span style="color: #2e7d32; font-weight: bold;">
+                                        🦽 Accesible: Sin escalones, puertas amplias, baño adaptado
+                                    </span>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endfor %}
