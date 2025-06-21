@@ -73,7 +73,7 @@ Este sistema experto, desarrollado en Python, optimiza la asignación de habitac
 - Puedes consultar los documentos PDF en la carpeta `documentacion/` para ver la base de conocimiento y justificación de las reglas.
 
 ## Créditos y licencia
-- Proyecto desarrollado por [Tu Nombre].
+- Proyecto desarrollado por Maria Celeste Moreno.
 - Licencia MIT.
 - Logo ficticio de hotel tomado de [flaticon.com](https://www.flaticon.com/free-icon/hotel_684908).
 
